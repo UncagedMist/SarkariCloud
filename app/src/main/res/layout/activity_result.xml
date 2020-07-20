@@ -6,31 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/back"
-    tools:context=".MainActivity">
+    tools:context=".ResultActivity">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="WebViewLayout">
 
         <include
             layout="@layout/app_bar"/>
 
-        <ss.com.bannerslider.Slider
-            android:id="@+id/banner_slider"
-            android:layout_margin="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:slider_interval="3000"
-            app:slider_loopSlides="true"
-            app:slider_animateIndicators="true"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
+        <WebView
+            android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recyclerView"/>
+            android:layout_margin="4dp"/>
 
     </LinearLayout>
+
 
 </RelativeLayout>
