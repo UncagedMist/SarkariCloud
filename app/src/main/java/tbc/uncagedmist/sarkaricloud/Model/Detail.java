@@ -1,10 +1,17 @@
 package tbc.uncagedmist.sarkaricloud.Model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class Detail {
 
     private String name, image,id, web;
 
     public Detail() {
+    }
+
+    public Detail(String name, String web) {
+        this.name = name;
+        this.web = web;
     }
 
     public Detail(String name, String image, String id, String web) {
@@ -30,6 +37,7 @@ public class Detail {
         this.image = image;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }

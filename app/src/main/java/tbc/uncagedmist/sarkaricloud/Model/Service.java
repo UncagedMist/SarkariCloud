@@ -1,5 +1,7 @@
 package tbc.uncagedmist.sarkaricloud.Model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class Service {
 
     private String id,name, image;
@@ -7,12 +9,11 @@ public class Service {
     public Service() {
     }
 
-    public Service(String id, String name, String image) {
-        this.id = id;
+    public Service(String name) {
         this.name = name;
-        this.image = image;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }

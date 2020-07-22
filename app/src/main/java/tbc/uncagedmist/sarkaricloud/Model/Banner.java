@@ -1,5 +1,7 @@
 package tbc.uncagedmist.sarkaricloud.Model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class Banner {
 
     private String image,id;
@@ -20,6 +22,7 @@ public class Banner {
         this.image = image;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }

@@ -15,8 +15,8 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/edt_yojna_name"
-            android:hint="Yojna Name"
+            android:id="@+id/edt_service_name"
+            android:hint="Service Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColorHint="@color/colorPrimary"

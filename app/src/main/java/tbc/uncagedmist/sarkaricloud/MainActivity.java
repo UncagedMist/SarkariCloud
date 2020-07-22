@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
     RecyclerView recyclerView;
 
     FloatingActionButton fabHome;
-    private EditText edt_yojna_name;
 
     CollectionReference refProducts,refBanner;
 
@@ -97,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
     @Override
     protected void onStart() {
         super.onStart();
-        final List<Product> products = new ArrayList<>();
         refProducts.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -114,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
         LayoutInflater inflater = this.getLayoutInflater();
         View add_new_yojna = inflater.inflate(R.layout.add_new_yojna,null);
 
-        edt_yojna_name = add_new_yojna.findViewById(R.id.edt_yojna_name);
+        final EditText edt_yojna_name = add_new_yojna.findViewById(R.id.edt_yojna_name);
 
         final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(this);
         dialogBuilder
@@ -147,8 +145,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
                             String name = edt_yojna_name.getText().toString().trim();
 
                             Product product = new Product(name);
-                            product.setImage("https://image.freepik.com/free-vector/colorful-gradient-background-with-bokeh-effect_23-2148358216.jpg");
-
+                            product.setImage("https://www.freevector.com/uploads/vector/preview/30355/Fluid_Gradient_Background.jpg");
                             refProducts.add(product);
                             dialogBuilder.dismiss();
                         }
