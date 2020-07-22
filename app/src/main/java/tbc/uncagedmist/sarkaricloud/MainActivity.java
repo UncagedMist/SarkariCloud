@@ -1,23 +1,33 @@
 package tbc.uncagedmist.sarkaricloud;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -37,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
 
     Slider bannerSlider;
     RecyclerView recyclerView;
+
+    FloatingActionButton fabHome;
+    private EditText edt_yojna_name;
 
     CollectionReference refProducts,refBanner;
 
@@ -61,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
 
         bannerSlider = findViewById(R.id.banner_slider);
         recyclerView = findViewById(R.id.recyclerView);
+        fabHome = findViewById(R.id.fabHome);
 
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),
                 R.anim.layout_fall_down);
@@ -69,9 +83,79 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
         iProductLoadListener = this;
         iBannerLoadListener = this;
 
+        fabHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddYojnaDialog();
+            }
+        });
+
         loadBanners();
         loadProducts();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        final List<Product> products = new ArrayList<>();
+        refProducts.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null)  {
+                    return;
+                }
+
+                loadProducts();
+            }
+        });
+    }
+
+    private void showAddYojnaDialog() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View add_new_yojna = inflater.inflate(R.layout.add_new_yojna,null);
+
+        edt_yojna_name = add_new_yojna.findViewById(R.id.edt_yojna_name);
+
+        final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(this);
+        dialogBuilder
+                .withTitle("Add new Yojna")
+                .withTitleColor("#FFFFFF")
+                .withDividerColor("#11000000")
+                .withMessage("Please fill all information")
+                .withMessageColor("#FFFFFFFF")
+                .withDialogColor("#FFE74C3C")
+                .withIcon(getResources().getDrawable(R.drawable.ic_baseline_fiber_new_24))
+                .withDuration(700)
+                .withEffect(Effectstype.Newspager)
+                .withButton1Text("Cancel")
+                .withButton2Text("Add Yojna")
+                .isCancelableOnTouchOutside(false)
+                .setCustomView(add_new_yojna,this)
+                .setButton1Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogBuilder.dismiss();
+                    }
+                })
+                .setButton2Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (TextUtils.isEmpty(edt_yojna_name.getText().toString()))   {
+                            Toast.makeText(MainActivity.this, "Plz enter yojna name..", Toast.LENGTH_SHORT).show();
+                        }
+                        else    {
+                            String name = edt_yojna_name.getText().toString().trim();
+
+                            Product product = new Product(name);
+                            product.setImage("https://image.freepik.com/free-vector/colorful-gradient-background-with-bokeh-effect_23-2148358216.jpg");
+
+                            refProducts.add(product);
+                            dialogBuilder.dismiss();
+                        }
+                    }
+                }).show();
+    }
+
 
     private void loadProducts() {
         refProducts.get()

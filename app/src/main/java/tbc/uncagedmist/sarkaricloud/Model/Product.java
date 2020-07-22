@@ -1,18 +1,20 @@
 package tbc.uncagedmist.sarkaricloud.Model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class Product {
 
-    private String id,name, image;
+    private String name, image;
+    private String id;
 
     public Product() {
     }
 
-    public Product(String id, String name, String image) {
-        this.id = id;
+    public Product(String name) {
         this.name = name;
-        this.image = image;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }

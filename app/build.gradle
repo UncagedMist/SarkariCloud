@@ -43,4 +43,5 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+    implementation 'com.github.sd6352051:NiftyDialogEffects:v1.0.3'
 }
