@@ -32,6 +32,7 @@ public class SplashActivity extends AppCompatActivity {
                 R.drawable.ic_baseline_menu_open_24,R.drawable.ic_baseline_close_24)
                 .addSubMenu(Color.parseColor("#258CFF"),R.drawable.ic_baseline_home_24)
                 .addSubMenu(Color.parseColor("#ffc107"),R.drawable.ic_baseline_settings_applications_24)
+                .addSubMenu(Color.parseColor("#009688"),R.drawable.ic_baseline_notifications_24)
                 .addSubMenu(Color.parseColor("#6d4c41"),R.drawable.ic_baseline_security_24)
                 .addSubMenu(Color.parseColor("#ff0000"),R.drawable.ic_baseline_exit_to_app_24)
                 .setOnMenuSelectedListener(new OnMenuSelectedListener() {
@@ -52,6 +53,9 @@ public class SplashActivity extends AppCompatActivity {
 
                                 }
                                 else if (arrayName[index].equals(arrayName[2]))  {
+                                    startActivity(new Intent(SplashActivity.this,NotifActivity.class));
+                                }
+                                else if (arrayName[index].equals(arrayName[3]))  {
                                     startActivity(new Intent(SplashActivity.this,PrivacyActivity.class));
                                 }
                                 else {
