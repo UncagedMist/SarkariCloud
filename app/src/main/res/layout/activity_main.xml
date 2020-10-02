@@ -21,7 +21,7 @@
             android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            app:slider_interval="3000"
+            app:slider_interval="6000"
             app:slider_loopSlides="true"
             app:slider_animateIndicators="true"
             />

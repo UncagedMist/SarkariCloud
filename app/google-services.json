@@ -90,35 +90,6 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:763650920038:android:65ab3906ca4367194427a7",
-        "android_client_info": {
-          "package_name": "tbc.uncagedmist.create"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "763650920038-ro22jh393qeise4mb5s225du30hq8suc.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyB7dCEW_P--6Wxz0Qbhji79-jwQwbtnFRk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "763650920038-ro22jh393qeise4mb5s225du30hq8suc.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:763650920038:android:40ce7c04cb42c9754427a7",
         "android_client_info": {
           "package_name": "tbc.uncagedmist.sarkaricloud"
@@ -148,9 +119,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:763650920038:android:f137fadf2f1ea4764427a7",
+        "mobilesdk_app_id": "1:763650920038:android:9d57f94c59b097e34427a7",
         "android_client_info": {
-          "package_name": "tbc.uncagedmist.sarkariseva"
+          "package_name": "tbc.uncagedmist.sarkarisahayata"
         }
       },
       "oauth_client": [

@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -34,9 +36,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
 import ss.com.bannerslider.Slider;
 import tbc.uncagedmist.sarkaricloud.Adapter.BannerSliderAdapter;
 import tbc.uncagedmist.sarkaricloud.Adapter.ProductAdapter;
+import tbc.uncagedmist.sarkaricloud.Common.Common;
 import tbc.uncagedmist.sarkaricloud.Model.Banner;
 import tbc.uncagedmist.sarkaricloud.Model.Product;
 import tbc.uncagedmist.sarkaricloud.Service.IBannerLoadListener;
@@ -55,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
     IProductLoadListener iProductLoadListener;
     IBannerLoadListener iBannerLoadListener;
 
+    String pID, pName, pImage,productID;
+
+    AlertDialog alertDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
         }
         setContentView(R.layout.activity_main);
 
+        alertDialog = new SpotsDialog(this);
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+
         refProducts = FirebaseFirestore.getInstance().collection("Sarkari");
         refBanner = FirebaseFirestore.getInstance().collection("Banner");
 
@@ -74,6 +86,17 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
         bannerSlider = findViewById(R.id.banner_slider);
         recyclerView = findViewById(R.id.recyclerView);
         fabHome = findViewById(R.id.fabHome);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            pID = bundle.getString("pID");
+            pName = bundle.getString("pName");
+            pImage = bundle.getString("pImage");
+
+            showUpdateDialog();
+
+        }
+
 
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recyclerView.getContext(),
                 R.anim.layout_fall_down);
@@ -102,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
                 if (error != null)  {
                     return;
                 }
-
                 loadProducts();
             }
         });
@@ -155,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
 
 
     private void loadProducts() {
+        alertDialog.show();
         refProducts.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -167,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
                                 products.add(product);
                             }
                             iProductLoadListener.onProductLoadSuccess(products);
+                            alertDialog.dismiss();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -178,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
     }
 
     private void loadBanners() {
+        alertDialog.show();
         refBanner.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -189,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
                                 banners.add(banner);
                             }
                             iBannerLoadListener.onBannerLoadSuccess(banners);
+                            alertDialog.dismiss();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -203,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
     public void onProductLoadSuccess(List<Product> products) {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+
 
         recyclerView.setAdapter(new ProductAdapter(this,products));
     }
@@ -220,5 +247,99 @@ public class MainActivity extends AppCompatActivity implements IProductLoadListe
     @Override
     public void onBannerLoadFailed(String message) {
         Toast.makeText(this, ""+message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showUpdateDialog() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View update_layout = inflater.inflate(R.layout.layout_update_delete,null);
+
+        final EditText edt_update_name = update_layout.findViewById(R.id.edt_update_name);
+        final EditText edt_update_img = update_layout.findViewById(R.id.edt_update_img);
+
+        edt_update_name.setText(pName);
+        edt_update_img.setText(pImage);
+
+        final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(this);
+        dialogBuilder
+                .withTitle("Products Update")
+                .withTitleColor("#FFFFFF")
+                .withDividerColor("#11000000")
+                .withMessage("Please fill all information")
+                .withMessageColor("#FFFFFFFF")
+                .withDialogColor("#FFE74C3C")
+                .withIcon(getResources().getDrawable(R.drawable.ic_baseline_update_24))
+                .withDuration(700)
+                .withEffect(Effectstype.Newspager)
+                .withButton1Text("Cancel")
+                .withButton2Text("Update")
+                .isCancelableOnTouchOutside(false)
+                .setCustomView(update_layout,this)
+                .setButton1Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogBuilder.dismiss();
+                    }
+                })
+                .setButton2Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String new_name = edt_update_name.getText().toString().trim();
+                        String new_image = edt_update_img.getText().toString().trim();
+
+                        updateData(pID,new_name,new_image);
+
+                        dialogBuilder.dismiss();
+                    }
+                }).show();
+    }
+
+    private void updateData(String id,String new_name, String new_image) {
+        refProducts
+                .document(id)
+                .update("name",new_name,
+                        "image",new_image)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(MainActivity.this, "Updated....", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void deleteData(int index)  {
+        refProducts
+                .document()
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(MainActivity.this, "Deleted....", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+
+        if (item.getTitle().equals(Common.UPDATE))  {
+        }
+        else if (item.getTitle().equals(Common.DELETE))  {
+            deleteData(item.getOrder());
+        }
+
+
+        return super.onContextItemSelected(item);
     }
 }

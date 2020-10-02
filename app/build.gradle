@@ -56,4 +56,6 @@ dependencies {
     implementation 'com.github.sd6352051:NiftyDialogEffects:v1.0.3'
 
     implementation 'com.onesignal:OneSignal:[3.15.0, 3.99.99]'
+
+    implementation 'com.github.d-max:spots-dialog:0.7@aar'
 }

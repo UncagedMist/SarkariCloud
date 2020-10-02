@@ -4,13 +4,18 @@ import com.google.firebase.firestore.Exclude;
 
 public class Service {
 
-    private String id,name, image;
+    private String id,name,image;
 
     public Service() {
     }
 
     public Service(String name) {
         this.name = name;
+    }
+
+    public Service(String name, String image) {
+        this.name = name;
+        this.image = image;
     }
 
     @Exclude

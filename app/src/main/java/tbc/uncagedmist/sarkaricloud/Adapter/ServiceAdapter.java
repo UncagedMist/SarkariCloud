@@ -1,7 +1,11 @@
 package tbc.uncagedmist.sarkaricloud.Adapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +22,9 @@ import java.util.List;
 
 import tbc.uncagedmist.sarkaricloud.Common.Common;
 import tbc.uncagedmist.sarkaricloud.DetailActivity;
+import tbc.uncagedmist.sarkaricloud.MainActivity;
 import tbc.uncagedmist.sarkaricloud.Model.Service;
+import tbc.uncagedmist.sarkaricloud.ProductsActivity;
 import tbc.uncagedmist.sarkaricloud.R;
 import tbc.uncagedmist.sarkaricloud.Service.IRecyclerItemSelectListener;
 
@@ -57,6 +63,45 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
                 context.startActivity(intent);
             }
         });
+
+        holder.cardService.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                String[] options = {"Update","Delete"};
+
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        if (i == 0) {
+                            String id = serviceList.get(position).getId();
+                            String name = serviceList.get(position).getName();
+                            String image = serviceList.get(position).getImage();
+
+                            Intent intent = new Intent(context, ProductsActivity.class);
+                            intent.putExtra("pID",id);
+                            intent.putExtra("pName",name);
+                            intent.putExtra("pImage",image);
+
+                            context.startActivity(intent);
+                            ((Activity)context).finish();
+
+                        }
+                        if (i == 1) {
+//                            Intent intent = new Intent(context,ProductsActivity.class);
+//                            intent.putExtra("id",serviceList.get(position).getId());
+//                            context.startActivity(intent);
+//                            ((Activity)context).finish();
+                        }
+
+                    }
+                }).create().show();
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -64,7 +109,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         return serviceList.size();
     }
 
-    public class ServiceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ServiceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
 
         ImageView serviceImage;
         TextView serviceName;
@@ -84,11 +129,20 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
             serviceName = itemView.findViewById(R.id.service_name);
 
             itemView.setOnClickListener(this);
+            itemView.setOnCreateContextMenuListener(this);
         }
 
         @Override
         public void onClick(View view) {
             iRecyclerItemSelectListener.onItemSelected(view,getAdapterPosition());
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            contextMenu.setHeaderTitle("Select the action");
+
+            contextMenu.add(0,0,getAdapterPosition(), Common.UPDATE);
+            contextMenu.add(0,1,getAdapterPosition(), Common.DELETE);
         }
     }
 }
